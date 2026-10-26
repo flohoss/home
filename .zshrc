@@ -26,7 +26,7 @@ ZSH_THEME="fino-time"
 # Uncomment one of the following lines to change the auto-update behavior
 # zstyle ':omz:update' mode disabled  # disable automatic updates
 # zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
+zstyle ':omz:update' mode reminder  # just remind me to update when it's time
 
 # Uncomment the following line to change how often to auto-update (in days).
 # zstyle ':omz:update' frequency 13
@@ -47,7 +47,7 @@ ENABLE_CORRECTION="true"
 # You can also set it to another string to have that shown instead of the default red dots.
 # e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
 # Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
+COMPLETION_WAITING_DOTS="true"
 
 # Uncomment the following line if you want to disable marking untracked files
 # under VCS as dirty. This makes repository status check for large repositories
@@ -60,7 +60,7 @@ ENABLE_CORRECTION="true"
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
 # see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
+HIST_STAMPS="yyyy-mm-dd"
 
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
@@ -70,7 +70,18 @@ ENABLE_CORRECTION="true"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git)
+# Note: zsh-syntax-highlighting must be the last plugin sourced.
+plugins=(
+  git
+  colored-man-pages
+  command-not-found
+  alias-finder
+  common-aliases
+  copypath
+  z
+  zsh-autosuggestions
+  zsh-syntax-highlighting
+)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -87,6 +98,12 @@ source $ZSH/oh-my-zsh.sh
 # else
 #   export EDITOR='mvim'
 # fi
+export EDITOR='vim'
+
+# macOS history niceties: commands prefixed with a space are not recorded,
+# and history is shared live between open shells.
+setopt HIST_IGNORE_SPACE
+setopt SHARE_HISTORY
 
 # Compilation flags
 # export ARCHFLAGS="-arch x86_64"
@@ -99,5 +116,24 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias ls="eza"
+
+# eza (modern ls) — guard so plain `ls` still works if eza is ever missing.
+if (( $+commands[eza] )); then
+  alias ls="eza --group-directories-first"
+  alias ll="eza -l --git --group-directories-first"
+  alias la="eza -la --git --group-directories-first"
+  alias tree="eza --tree --level=2"
+fi
+
 alias coffee="caffeinate -d -i -u -s"
+
+# macOS conveniences
+alias showfiles='defaults write com.apple.finder AppleShowAllFiles YES; killall Finder'
+alias hidefiles='defaults write com.apple.finder AppleShowAllFiles NO; killall Finder'
+alias flushdns='sudo dscacheutil -flushcache; sudo killall -HUP mDNSResponder'
+alias ipinfo='echo "local:  $(ipconfig getifaddr en0)"; echo "public: $(curl -s ifconfig.me)"'
+
+# Internet quality checks
+alias pingq='ping -c 5 1.1.1.1'                    # quick latency check (5 pings to Cloudflare)
+alias netq='mtr --report-wide --show-extensions 1.1.1.1'  # full path latency/loss report
+alias speedtest='networkQuality -s -v'             # built-in macOS speed test (sequential, avoids saturation)
