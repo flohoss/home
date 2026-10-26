@@ -16,6 +16,15 @@ syntax on
 " Add numbers to each line on the left-hand side.
 set number
 
+" Show relative line numbers (hybrid mode with `number`).
+set relativenumber
+
+" Highlight the current line.
+set cursorline
+
+" Keep a few lines visible above/below the cursor when scrolling.
+set scrolloff=8
+
 " Set shift width to 4 spaces.
 set shiftwidth=4
 
@@ -27,6 +36,22 @@ set expandtab
 
 " Do not save backup files.
 set nobackup
+
+" Do not create swap files (modern recovery is rarely used with undo persistence).
+set noswapfile
+
+" Persistent undo across sessions.
+set undofile
+set undodir=~/.vim/undodir
+
+" No audible/visual bell on errors.
+set noerrorbells
+
+" Allow backspace over indentation, line breaks, and insert start.
+set backspace=indent,eol,start
+
+" Smarter autoindenting for code.
+set smartindent
 
 " Do not wrap lines. Allow long lines to extend as far as the line goes.
 set nowrap
@@ -53,11 +78,18 @@ set showmatch
 " Use highlighting when doing a search.
 set hlsearch
 
+" Clear search highlighting with <leader><space>.
+let mapleader = " "
+nnoremap <leader><space> :nohlsearch<CR>
+
 " Enable auto completion menu after pressing TAB.
 set wildmenu
 
 " Make wildmenu behave like similar to Bash completion.
-set wildmode=list:longest
+set wildmode=longest,list,full
+
+" Show wildmenu completion matches in a popup menu (Vim 9+).
+set wildoptions=pum
 
 " There are certain files that we would never want to edit with Vim.
 " Wildmenu will ignore files with these extensions.
