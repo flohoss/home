@@ -16,12 +16,6 @@ syntax on
 " Add numbers to each line on the left-hand side.
 set number
 
-" Show relative line numbers (hybrid mode with `number`).
-set relativenumber
-
-" Highlight the current line.
-set cursorline
-
 " Keep a few lines visible above/below the cursor when scrolling.
 set scrolloff=8
 
